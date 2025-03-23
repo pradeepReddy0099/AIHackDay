@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Creative Text Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .floating-image {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .image1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .image2 { top: 20%; right: 5%; animation-delay: 2s; }
+        .image3 { bottom: 10%; left: 10%; animation-delay: 1s; }
+        .image4 { bottom: 20%; right: 10%; animation-delay: 3s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        #input-container, #result-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2;
+            position: relative;
+        }
+
+        #input-container {
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        #theme-input, #genre-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        #theme-input:focus, #genre-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        #generate-button {
+            width: 100%;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #generate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #result-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        #generated-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #2c3e50;
+            white-space: pre-wrap;
+        }
+
+        .theme-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .theme-tag {
+            background: #e9ecef;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            color: #495057;
+        }
+
+        .theme-tag:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .suggestions-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        
+        #generated-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add floating decorative elements -->
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M9.5,3L12,7L14.5,3H9.5M12,21L9.5,17L14.5,17L12,21M4.5,9H7.5L7.5,15H4.5V9M16.5,9H19.5V15H16.5V9Z'/%3E%3C/svg%3E" 
+         class="floating-image image1" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4'/%3E%3C/svg%3E" 
+         class="floating-image image2" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M3,7L9,13V7H3M3,13L9,19V13H3M13,7L19,13V7H13M13,13L19,19V13H13Z'/%3E%3C/svg%3E" 
+         class="floating-image image3" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2L1,21H23L12,2M12,6L19.53,19H4.47L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z'/%3E%3C/svg%3E" 
+         class="floating-image image4" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4'/%3E%3C/svg%3E" 
+         class="floating-image image5" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2L1,21H23L12,2M12,6L19.53,19H4.47L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z'/%3E%3C/svg%3E" 
+         class="floating-image image6" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4'/%3E%3C/svg%3E" 
+         class="floating-image image7" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2L1,21H23L12,2M12,6L19.53,19H4.47L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z'/%3E%3C/svg%3E" 
+         class="floating-image image8" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4'/%3E%3C/svg%3E" 
+         class="floating-image image9" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2L1,21H23L12,2M12,6L19.53,19H4.47L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z'/%3E%3C/svg%3E" 
+         class="floating-image image10" alt="">
+    <img src="data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4'/%3E%3C/svg%3E" 
+         class="floating-image image11" alt="">
+
+    <div id="input-container">
+        <div class="input-group">
+            <label for="theme-input">Enter Your Theme:</label>
+            <input type="text" id="theme-input" placeholder="Enter a theme for your story...">
+            <div class="suggestions-label">Suggested themes:</div>
+            <div class="theme-suggestions">
+                <button class="theme-tag">Adventure in Space</button>
+                <button class="theme-tag">Love</button>
+                <button class="theme-tag">Magic Forest</button>
+                <button class="theme-tag">Hidden Creatures of Deep Sea</button>
+                <button class="theme-tag">First Day of Futuristic School</button>
+                <button class="theme-tag">Talking Animals</button>
+                <button class="theme-tag">Avengers in India</button>
+                <button class="theme-tag">Lord Krishna's Underwater City</button>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="genre-select">Select Genre:</label>
+            <select id="genre-select">
+                <option value="Story">Story</option>
+                <option value="Poetry">Poetry</option>
+                <option value="Sci-Fi">Science Fiction</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Dialogue">Dialogue</option>
+                <option value="Speech">Speech</option>
+            </select>
+        </div>
+        <button id="generate-button">Generate</button>
+    </div>
+    <div id="result-container">
+        <div id="generated-title"></div>
+        <div id="generated-text"></div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.theme-tag').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('theme-input').value = button.textContent;
+            });
+        });
+
+        document.getElementById('generate-button').addEventListener('click', async function() {
+            const theme = document.getElementById('theme-input').value.trim();
+            const genre = document.getElementById('genre-select').value;
+            const generatedText = document.getElementById('generated-text');
+            const generatedTitle = document.getElementById('generated-title');
+
+            if (!theme) {
+                generatedText.innerHTML = '<span style="color: #dc3545">Please enter a theme.</span>';
+                generatedTitle.textContent = '';
+                return;
+            }
+
+            try {
+                generatedText.innerHTML = '<span class="loading">Generating your creative text...</span>';
+                generatedTitle.textContent = '';
+                this.disabled = true;
+
+                const response = await fetch('http://localhost:5000/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ theme, genre }),
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                generatedTitle.textContent = data.title;
+                generatedText.textContent = data.generatedText;
+            } catch (error) {
+                generatedText.innerHTML = `<span style="color: #dc3545">Error: ${error.message}</span>`;
+                generatedTitle.textContent = '';
+            } finally {
+                this.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
